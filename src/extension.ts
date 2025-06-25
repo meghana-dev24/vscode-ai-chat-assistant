@@ -1,26 +1,33 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { getWebviewContent } from './webviewContent';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  // Register command to open chat
+  let disposable = vscode.commands.registerCommand('ai-chat-assistant.openChat', () => {
+    // Create WebView panel
+    const panel = vscode.window.createWebviewPanel(
+      'aiChat',
+      'AI Chat Assistant',
+      vscode.ViewColumn.One,
+      { enableScripts: true }
+    );
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "ai-chat-assistant" is now active!');
+    // Handle messages from WebView (e.g., user queries)
+    panel.webview.onDidReceiveMessage(async message => {
+      if (message.command === 'sendMessage') {
+        const response = await getAIResponse(message.text);
+        panel.webview.postMessage({ command: 'receiveMessage', text: response });
+      }
+    });
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('ai-chat-assistant.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from AI Chat Assistant!');
-	});
+    // Load React app
+    panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
+  });
 
-	context.subscriptions.push(disposable);
+  context.subscriptions.push(disposable);
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+async function getAIResponse(prompt: string): Promise<string> {
+  // Replace with actual OpenAI API call
+  return `AI: You asked "${prompt}". This is a mock response.`;
+}
