@@ -1,15 +1,20 @@
 {
-  "compilerOptions" : {
-    "module": "commonjs",
-    "target": "ES2020",
-    "outDir":"out",
-    "rootDir":"src",
-    "strict":"src",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "target": "esnext",
     "strict": true,
-    "esModuleInterrop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
-  "exclude": [
-    "media",
-    "node_modules"
-  ]
+  "include": ["src"]
 }
+{
+  "complierOptions":{
+    /*Your existing config*/
+    },
+    "exclude": [
+      "media",
+         "node_modules"
+    ]
+  }
